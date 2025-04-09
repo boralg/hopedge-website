@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,13 +14,11 @@
             background-color: #000;
             overflow: hidden;
         }
-
         #container {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-
         #controls {
             margin-top: 20px;
             padding: 10px;
@@ -31,7 +28,6 @@
             gap: 15px;
             flex-wrap: wrap;
         }
-
         button {
             padding: 8px 16px;
             background-color: #4CAF50;
@@ -40,52 +36,43 @@
             border-radius: 4px;
             cursor: pointer;
         }
-
         button:hover {
             background-color: #45a049;
         }
-
         input {
             padding: 6px;
             border-radius: 4px;
             border: 1px solid #ccc;
             width: 60px;
         }
-
         label {
             color: white;
             margin-right: 5px;
         }
-
         .mode-button {
             background-color: #2196F3;
         }
-
         .mode-button.active {
             background-color: #0b7dda;
             box-shadow: 0 0 5px #fff;
         }
-
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-
         .triangle {
             opacity: 0;
+        }
+        .triangle.animate {
             animation: fadeIn 0.3s ease-in-out forwards;
         }
-
+        .triangle.no-animate {
+            opacity: 1;
+        }
         .triangle-filled {
             fill: white;
             mix-blend-mode: difference;
         }
-
         .triangle-outline {
             fill: none;
             stroke: white;
@@ -93,7 +80,6 @@
         }
     </style>
 </head>
-
 <body>
     <div id="container">
         <div id="content"></div>
@@ -110,6 +96,14 @@
                 <label for="rotationStep">Rotation Step:</label>
                 <input type="number" id="rotationStep" min="1" max="45" value="10">
             </div>
+            <div>
+                <label for="animationDelay">Delay (ms):</label>
+                <input type="number" id="animationDelay" min="0" max="100" value="10">
+            </div>
+            <div class="checkbox-control">
+                <input type="checkbox" id="disableAnimation" checked="false">
+                <label for="disableAnimation">Disable Fade-in</label>
+            </div>
             <button id="regenerate">Regenerate</button>
             <div style="width: 100%; height: 1px; background-color: rgba(255,255,255,0.3); margin: 5px 0;"></div>
             <div>
@@ -123,7 +117,7 @@
     <script>
         let currentMode = 'filled';
 
-        function generateTrianglePattern(triangleCount, scaleRatio, rotationStep, mode) {
+        function generateTrianglePattern(triangleCount, scaleRatio, rotationStep, mode, delay, disableAnimation) {
             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
             svg.setAttribute('width', 600);
             svg.setAttribute('height', 600);
@@ -132,22 +126,36 @@
             const trianglesGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
             svg.appendChild(trianglesGroup);
 
-            for (let i = 0; i < triangleCount; i++) {
-                setTimeout(() => {
-                    const rotation = i * rotationStep;
-                    const scale = 2 * Math.pow(scaleRatio, rotation / 180 * Math.PI);
+            function createTriangle(i) {
+                const rotation = i * rotationStep;
+                const scale = 2 * Math.pow(scaleRatio, rotation / 180 * Math.PI);
 
-                    const side = 100 * scale;
-                    const height = side * Math.sqrt(3) / 2;
+                const side = 100 * scale;
+                const height = side * Math.sqrt(3) / 2;
 
-                    const triangle = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-                    triangle.setAttribute('points', `0,${-height * (2 / 3)} ${side / 2},${height * (1 / 3)} ${-side / 2},${height * (1 / 3)}`);
-                    triangle.setAttribute('transform', `rotate(${rotation})`);
-                    triangle.classList.add('triangle');
-                    triangle.classList.add(mode === 'filled' ? 'triangle-filled' : 'triangle-outline');
+                const triangle = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                triangle.setAttribute('points', `0,${-height * (2 / 3)} ${side / 2},${height * (1 / 3)} ${-side / 2},${height * (1 / 3)}`);
+                triangle.setAttribute('transform', `rotate(${rotation})`);
+                triangle.classList.add('triangle');
+                triangle.classList.add(mode === 'filled' ? 'triangle-filled' : 'triangle-outline');
+                
+                if (disableAnimation) {
+                    triangle.classList.add('no-animate');
+                } else {
+                    triangle.classList.add('animate');
+                }
 
-                    trianglesGroup.appendChild(triangle);
-                }, i * 10);
+                trianglesGroup.appendChild(triangle);
+            }
+
+            if (delay <= 0) {
+                for (let i = 0; i < triangleCount; i++) {
+                    createTriangle(i);
+                }
+            } else {
+                for (let i = 0; i < triangleCount; i++) {
+                    setTimeout(() => createTriangle(i), i * delay);
+                }
             }
 
             return svg;
@@ -165,8 +173,10 @@
             const triangleCount = parseInt(document.getElementById('triangleCount').value, 10);
             const scaleRatio = parseFloat(document.getElementById('scaleRatio').value);
             const rotationStep = parseInt(document.getElementById('rotationStep').value, 10);
-            var svg = generateTrianglePattern(triangleCount, scaleRatio, rotationStep, currentMode);
-
+            const delay = parseInt(document.getElementById('animationDelay').value, 10);
+            const disableAnimation = document.getElementById('disableAnimation').checked;
+            
+            const svg = generateTrianglePattern(triangleCount, scaleRatio, rotationStep, currentMode, delay, disableAnimation);
             content.appendChild(svg);
         }
 
@@ -184,8 +194,9 @@
             refresh();
         });
 
+        document.getElementById('disableAnimation').addEventListener('change', refresh);
+
         refresh();
     </script>
 </body>
-
 </html>
