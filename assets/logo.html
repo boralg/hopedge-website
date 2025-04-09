@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hopedge Logo</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #000;
+            overflow: hidden;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #controls {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        input {
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 60px;
+        }
+
+        label {
+            color: white;
+            margin-right: 5px;
+        }
+
+        .mode-button {
+            background-color: #2196F3;
+        }
+
+        .mode-button.active {
+            background-color: #0b7dda;
+            box-shadow: 0 0 5px #fff;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .triangle {
+            opacity: 0;
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+
+        .triangle-filled {
+            fill: white;
+            mix-blend-mode: difference;
+        }
+
+        .triangle-outline {
+            fill: none;
+            stroke: white;
+            stroke-width: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div id="content"></div>
+        <div id="controls">
+            <div>
+                <label for="triangleCount">Triangles:</label>
+                <input type="number" id="triangleCount" min="5" max="100" value="13">
+            </div>
+            <div>
+                <label for="scaleRatio">Scale Ratio:</label>
+                <input type="number" id="scaleRatio" min="0.5" max="0.99" step="0.01" value="0.5">
+            </div>
+            <div>
+                <label for="rotationStep">Rotation Step:</label>
+                <input type="number" id="rotationStep" min="1" max="45" value="10">
+            </div>
+            <button id="regenerate">Regenerate</button>
+            <div style="width: 100%; height: 1px; background-color: rgba(255,255,255,0.3); margin: 5px 0;"></div>
+            <div>
+                <label>Display Mode:</label>
+                <button id="mode-filled" class="mode-button active">Filled</button>
+                <button id="mode-outline" class="mode-button">Outline</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 'filled';
+
+        function generateTrianglePattern(triangleCount, scaleRatio, rotationStep, mode) {
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', 600);
+            svg.setAttribute('height', 600);
+            svg.setAttribute('viewBox', '-150 -150 300 300');
+
+            const trianglesGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            svg.appendChild(trianglesGroup);
+
+            for (let i = 0; i < triangleCount; i++) {
+                setTimeout(() => {
+                    const rotation = i * rotationStep;
+                    const scale = 2 * Math.pow(scaleRatio, rotation / 180 * Math.PI);
+
+                    const side = 100 * scale;
+                    const height = side * Math.sqrt(3) / 2;
+
+                    const triangle = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                    triangle.setAttribute('points', `0,${-height * (2 / 3)} ${side / 2},${height * (1 / 3)} ${-side / 2},${height * (1 / 3)}`);
+                    triangle.setAttribute('transform', `rotate(${rotation})`);
+                    triangle.classList.add('triangle');
+                    triangle.classList.add(mode === 'filled' ? 'triangle-filled' : 'triangle-outline');
+
+                    trianglesGroup.appendChild(triangle);
+                }, i * 10);
+            }
+
+            return svg;
+        }
+
+        function updateModeButtons() {
+            document.getElementById('mode-filled').classList.toggle('active', currentMode === 'filled');
+            document.getElementById('mode-outline').classList.toggle('active', currentMode === 'outline');
+        }
+
+        function refresh() {
+            const content = document.getElementById('content');
+            content.innerHTML = '';
+
+            const triangleCount = parseInt(document.getElementById('triangleCount').value, 10);
+            const scaleRatio = parseFloat(document.getElementById('scaleRatio').value);
+            const rotationStep = parseInt(document.getElementById('rotationStep').value, 10);
+            var svg = generateTrianglePattern(triangleCount, scaleRatio, rotationStep, currentMode);
+
+            content.appendChild(svg);
+        }
+
+        document.getElementById('regenerate').addEventListener('click', refresh);
+
+        document.getElementById('mode-filled').addEventListener('click', () => {
+            currentMode = 'filled';
+            updateModeButtons();
+            refresh();
+        });
+
+        document.getElementById('mode-outline').addEventListener('click', () => {
+            currentMode = 'outline';
+            updateModeButtons();
+            refresh();
+        });
+
+        refresh();
+    </script>
+</body>
+
+</html>
