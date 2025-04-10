@@ -21,6 +21,8 @@ pub struct StaticPaths {
     // pub logo_path: String,
     pub header_css_path: String,
     pub main_css_path: String,
+    pub dark_mode_css_path: String,
+    pub dark_mode_js_path: String,
 }
 
 impl StaticPaths {
@@ -29,6 +31,8 @@ impl StaticPaths {
             // logo_path: Asset::get_hashed_url("images/flake_white.png"),
             header_css_path: Asset::get_hashed_url("styles/header.css"),
             main_css_path: Asset::get_hashed_url("styles/main.css"),
+            dark_mode_css_path: Asset::get_hashed_url("styles/dark-mode.css"),
+            dark_mode_js_path: Asset::get_hashed_url("js/dark-mode.js"),
         }
     }
 }

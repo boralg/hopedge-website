@@ -50,6 +50,47 @@ header {
     position: relative;
 }
 
+#dark-mode-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+}
+
+#dark-mode-toggle:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode #dark-mode-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode #dark-mode-toggle {
+    color: #fff;
+}
+
+.mode-icon {
+    width: 24px;
+    height: 24px;
+}
+
+#sun-icon {
+    display: none;
+}
+
+.dark-mode #moon-icon {
+    display: none;
+}
+
+.dark-mode #sun-icon {
+    display: block;
+}
+
 @media (max-width: 768px) {
     header {
         flex-direction: column;
@@ -63,5 +104,11 @@ header {
 
     .header-title h1 {
         font-size: 2rem;
+    }
+
+    #dark-mode-toggle {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
     }
 }

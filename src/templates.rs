@@ -7,6 +7,8 @@ use crate::{data::static_paths::StaticPaths, raw::Raw};
 pub struct Main {
     header: Raw<Header>,
     main_css_path: String,
+    dark_mode_css_path: String,
+    dark_mode_js_path: String,
 }
 
 impl Default for Main {
@@ -15,6 +17,8 @@ impl Default for Main {
         Self {
             header: Raw::to_raw(Header::default()),
             main_css_path: sp.main_css_path.clone(),
+            dark_mode_css_path: sp.dark_mode_css_path.clone(),
+            dark_mode_js_path: sp.dark_mode_js_path.clone(),
         }
     }
 }
@@ -31,7 +35,7 @@ impl Default for Header {
         let sp = StaticPaths::new();
         Self {
             header_css_path: sp.header_css_path.clone(),
-            logo_path: "".to_owned(),       //sp.logo_path.clone(),
+            logo_path: "".to_owned(), //sp.logo_path.clone(),
         }
     }
 }
