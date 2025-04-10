@@ -31,7 +31,7 @@ header {
 }
 
 .gradient-text .red {
-    color: #ff0000;
+    color: #e72e2e;
 }
 
 .gradient-text .cyan {
@@ -40,10 +40,8 @@ header {
 
 .gradient-text .special {
     background: linear-gradient(to right,
-            #e94c4c 0%,
-            #e94c4c 30%,
-            #4cace9 70%,
-            #4cace9 100%);
+            #e72e2e 30%,
+            #4cace9 70%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
