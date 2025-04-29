@@ -10,13 +10,18 @@ mod raw;
 mod templates;
 
 fn main() {
-    let router = Router::new().route("/", get(|| Main::default().render().unwrap()));
+    let router = Router::new()
+        .route("/", get(|| Main::default().render().unwrap()))
+        .fallback(|| Main::default().render().unwrap());
 
     router
         .render(
             Path::new("public"),
             RenderConfig {
-                redirect_lists: vec![RedirectList::for_cloudflare_pages()],
+                redirect_lists: vec![
+                    RedirectList::for_cloudflare_pages(),
+                    RedirectList::for_static_web_server(), // TODO: remove on prod
+                ],
                 ..Default::default()
             },
         )

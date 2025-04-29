@@ -39,3 +39,24 @@ impl Default for Header {
         }
     }
 }
+
+#[derive(Template)]
+#[template(path = "404.html")]
+pub struct NotFound {
+    header: Raw<Header>,
+    main_css_path: String,
+    dark_mode_css_path: String,
+    dark_mode_js_path: String,
+}
+
+impl Default for NotFound {
+    fn default() -> Self {
+        let sp = StaticPaths::new();
+        Self {
+            header: Raw::to_raw(Header::default()),
+            main_css_path: sp.main_css_path.clone(),
+            dark_mode_css_path: sp.dark_mode_css_path.clone(),
+            dark_mode_js_path: sp.dark_mode_js_path.clone(),
+        }
+    }
+}
