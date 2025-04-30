@@ -3,7 +3,7 @@ use pagebake::redirects::RedirectList;
 use pagebake::{get, render::RenderConfig, Router};
 use std::fs;
 use std::path::Path;
-use templates::Main;
+use templates::{Main, NotFound};
 
 mod data;
 mod raw;
@@ -12,7 +12,7 @@ mod templates;
 fn main() {
     let router = Router::new()
         .route("/", get(|| Main::default().render().unwrap()))
-        .fallback(|| Main::default().render().unwrap());
+        .fallback(|| NotFound::default().render().unwrap());
 
     router
         .render(
