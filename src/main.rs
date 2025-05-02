@@ -20,7 +20,7 @@ fn main() {
             RenderConfig {
                 redirect_lists: vec![
                     RedirectList::for_cloudflare_pages(),
-                    RedirectList::for_static_web_server(), // TODO: remove on prod
+                    RedirectList::for_static_web_server(),
                 ],
                 ..Default::default()
             },
